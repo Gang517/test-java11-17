@@ -1,18 +1,11 @@
 Write-Host "1. Running GitHub Actions workflow..." -ForegroundColor Yellow
 act push -v
 
-Write-Host "2. Checking and building Docker image..." -ForegroundColor Yellow
-$imageExists = docker images -q my-java-app
-if (-not $imageExists) {
-    Write-Host "Docker image does not exist. Building a new one." -ForegroundColor Yellow
-    docker build --no-cache -t my-java-app .
-} else {
-    Write-Host "Using existing Docker image." -ForegroundColor Green
-    docker build --no-cache -t my-java-app
-}
+Write-Host "2. Building Docker image..." -ForegroundColor Yellow
+docker build --no-cache -t my-java-app .
 
 if ($LASTEXITCODE -eq 0) {
-    Write-Host "3. Docker image is ready! Preparing to run the container..." -ForegroundColor Green
+    Write-Host "3. Docker image build successful! Preparing to run container..." -ForegroundColor Green
     
     Write-Host "4. Checking and removing containers using port 8080..." -ForegroundColor Yellow
     $containersUsingPort = docker ps -aq --filter "publish=8080"
@@ -40,5 +33,5 @@ if ($LASTEXITCODE -eq 0) {
         Write-Host "9. There is an issue with the container. Status: $containerStatus" -ForegroundColor Red
     }
 } else {
-    Write-Host "Docker image build failed. Please check the logs." -ForegroundColor Red
+    Write-Host "10. Docker image build failed. Check the logs." -ForegroundColor Red
 }
